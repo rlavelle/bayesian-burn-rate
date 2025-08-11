@@ -4,5 +4,5 @@
 
 double uniform_sample(double a, double b) {
     double U = rand()/((double)RAND_MAX);
-    return a + (b-a)*U
+    return a + (b-a)*U;
 }

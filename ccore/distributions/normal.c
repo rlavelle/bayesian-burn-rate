@@ -16,7 +16,6 @@ double normal_sample(double mu, double sigma) {
     double x,y,r;
 
     do {
-        // ~ U(-1,1)
         x = uniform_sample(-1,1); 
         y = uniform_sample(-1,1);
         r = x*x + y*y; // euclid dist
