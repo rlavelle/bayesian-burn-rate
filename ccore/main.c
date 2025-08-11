@@ -1,28 +1,24 @@
 #include <stdio.h>
 #include "distributions/distributions.h"
+#include "samplers/samplers.h"
+#include "core.h"
 #include <math.h>
 
 int main() {
-    int N = 1000000;
-    double rngs[N];
-    double sum = 0.0;
+    char data_path[256] = "/Users/rowanlavelle/Documents/Projects/bayesian-burn-rate/data/spend.txt";
+    spend_data *spend = read_data(data_path);
+    int n_data = spend->n_data;
+    double *data = spend->data;
 
-    for(int i = 0; i<N; i++){
-        rngs[i] = normal_sample(0.0,1.0);
-        sum += rngs[i];
-    }
-
-    double mu = sum/N;
-
-    double var = 0.0;
-    for(int i = 0; i<N; i++){
-        var += pow(rngs[i] - mu, 2);
-    }
-
-    var = var/N;
-
-    printf("mu=%f var=%f\n", mu, var);
-
+    int n_iter = 100000;
     
+    log_norm_priors *priors = &DEFAULT_PRIORS;
+    log_norm_samp* samples = gibbs_sampler(
+        priors, data, n_data, n_iter
+    );
+
+    char out_path[256] = "/Users/rowanlavelle/Documents/Projects/bayesian-burn-rate/data/results.csv";
+    write_sampler_results(out_path, samples, n_iter);
+
     return 0;
 }
