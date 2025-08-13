@@ -45,11 +45,11 @@ double compute_ss(double theta, double *y, int n_data) {
     return ss / n_data;
 }
 
-log_norm_samp *gibbs_sampler(log_norm_priors *priors, double *y, int n_data, int n_iter) {
-    log_norm_samp *result = (log_norm_samp*)malloc(sizeof(log_norm_samp)*n_iter);
+log_norm_samp_t *gibbs_sampler(log_norm_priors_t *priors, double *y, int n_data, int n_iter) {
+    log_norm_samp_t *result = (log_norm_samp_t*)malloc(n_iter*sizeof(log_norm_samp_t));
     
     // let x1,...,xn = log(y1),...,log(yn)
-    double *x = (double*)malloc(sizeof(double)*n_data);
+    double *x = (double*)malloc(n_data*sizeof(double));
     for(int i = 0; i<n_data; i++){
         *(x+i) = log(*(y+i));
     }
@@ -82,7 +82,7 @@ log_norm_samp *gibbs_sampler(log_norm_priors *priors, double *y, int n_data, int
         // 4) y_(i) ~ LogNorm(theta_(i), sigma^2_(i))
         double ypred = log_normal_sample(theta_i, sqrt(sigma2_i));
 
-        log_norm_samp sample = {
+        log_norm_samp_t sample = {
             .params = {
                 .theta = theta_i,
                 .sigma2 = sigma2_i
@@ -94,9 +94,9 @@ log_norm_samp *gibbs_sampler(log_norm_priors *priors, double *y, int n_data, int
 
         i++;
 
-        if(i%10000 == 0){
-            printf("%d iters complete...\n", i);
-        }
+        // if(i%10000 == 0){
+        //     printf("%d iters complete...\n", i);
+        // }
     }   
 
     return result;

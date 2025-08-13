@@ -2,8 +2,9 @@
 #include <stdlib.h>
 #include "core.h"
 #include "samplers/samplers.h"
+#include "simulation/simulation.h"
 
-spend_data *read_data(const char *fpath) {
+data_t *read_data(const char *fpath) {
     FILE *file = fopen(fpath, "r");
     if(file == NULL){
         printf("failed to open file\n");
@@ -31,21 +32,21 @@ spend_data *read_data(const char *fpath) {
 
     }
 
-    spend_data *spend = (spend_data*)malloc(sizeof(spend_data));
-    spend->data = malloc(count*sizeof(double));
-    spend->n_data = count;
+    data_t *data = (data_t*)malloc(sizeof(data_t));
+    data->data = malloc(count*sizeof(double));
+    data->n_data = count;
     
     for(int i = 0; i<count; i++){
-        spend->data[i] = (double)*(tmp_data + i);
+        data->data[i] = (double)*(tmp_data + i);
     }
 
     free(tmp_data);
     fclose(file);
 
-    return spend;
+    return data;
 }
 
-int write_sampler_results(const char* fpath, log_norm_samp *samples, int size){
+int write_sampler_results(const char* fpath, log_norm_samp_t *samples, int size){
     FILE* file = fopen(fpath, "w");
     if (file == NULL) {
         perror("Error opening file");
@@ -70,7 +71,39 @@ int write_sampler_results(const char* fpath, log_norm_samp *samples, int size){
         return -1;
     }
 
-    printf("Successfully wrote %d elements to %s\n", size, fpath);
+    //printf("Successfully wrote %d elements to %s\n", size, fpath);
     return 0;
 }
 
+int write_simulation_results(const char* fpath, simulation_t *sims, int size){
+    FILE* file = fopen(fpath, "w");
+    if (file == NULL) {
+        perror("Error opening file");
+        return -1;
+    }
+
+    for (int i = 0; i < size; i++) {
+        int n_data = sims[i].sim_len;
+        for(int j = 0; j < n_data-1; j++){
+            if (fprintf(file, "%f,", sims[i].sim[j]) < 0) {
+                perror("Error writing to file");
+                fclose(file);
+                return -1;
+            }
+        }
+        if (fprintf(file, "%f\n", sims[i].sim[n_data-1]) < 0) {
+                perror("Error writing to file");
+                fclose(file);
+                return -1;
+            }
+
+    }
+
+    if (fclose(file) != 0) {
+        perror("Error closing file");
+        return -1;
+    }
+
+    //printf("Successfully wrote %d elements to %s\n", size, fpath);
+    return 0;
+}
