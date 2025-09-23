@@ -10,7 +10,9 @@ int random_index(int size) {
 }
 
 simulation_t *simulate_spending(double funds,
-                                double (*change_func)(double),
+                                double (*change_func)(double,double,double,double,double),
+                                change_point_params_t params,
+                                double Q,
                                 log_norm_samp_t *gibbs_dist,
                                 double gibbs_dist_size,
                                 int n_iters) {
@@ -32,7 +34,7 @@ simulation_t *simulate_spending(double funds,
             }
 
             double sample = gibbs_dist[random_index(gibbs_dist_size)].ypred;
-            if(uniform_sample(0,1) < change_func(j) || flag){
+            if(uniform_sample(0,1) < change_func(j,params.k,params.L,params.L,Q) || flag){
                 sample += 2300;
                 flag = 1;
             }
