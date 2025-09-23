@@ -34,7 +34,7 @@ fig = plt.figure(figsize=(16,10))
 gs = GridSpec(2,2, width_ratios=[1,1], height_ratios=[1,1], wspace=0.3, hspace=0.3)
 
 # --- Top-left: Spending sims ---
-ax1 = fig.add_subplot(gs[0,0])
+ax1 = fig.add_subplot(gs[0,:])
 for idx in range(3,8):
     tmp = read_sim(fpath + f"sim_results_{idx}.csv")
     n_sims = min(150, tmp.shape[0])
@@ -59,7 +59,7 @@ ax1.set_ylabel("Spending ($)")
 ax1.set_title("Spending Simulations")
 
 # --- Bottom-left: Survivor curve ---
-ax2 = fig.add_subplot(gs[1,0], sharex=ax1)
+ax2 = fig.add_subplot(gs[1,0])
 for idx in range(3,8):
     tmp = read_sim(fpath + f"sim_results_{idx}.csv")
     p_have_money = 1 - (tmp==0).mean(axis=0)
@@ -71,7 +71,7 @@ ax2.set_title("Survivor / Burnout Plot")
 ax2.legend()
 
 # --- Right: Gibbs histogram ---
-ax3 = fig.add_subplot(gs[:,1])  # spans both rows
+ax3 = fig.add_subplot(gs[1,1])
 bins = np.linspace(0, 10000, 51)
 colors = plt.cm.tab10.colors
 for i, x in enumerate(g.sn.unique()):
@@ -93,6 +93,10 @@ ax1.set_xticklabels([m.strftime("%b %Y") for m in all_months], rotation=45, ha='
 
 ax2.set_xticks(range(len(all_months)))
 ax2.set_xticklabels([m.strftime("%b %Y") for m in all_months], rotation=45, ha='right')
+
+ax1.grid(True, linestyle='--', alpha=0.5)
+ax2.grid(True, linestyle='--', alpha=0.5)
+ax3.grid(True, linestyle='--', alpha=0.5)
 
 plt.tight_layout()
 plt.show()
