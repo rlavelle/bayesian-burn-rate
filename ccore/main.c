@@ -11,8 +11,10 @@ int main() {
     char data_path[256] = "/Users/rowanlavelle/Documents/Projects/bayesian-burn-rate/data/spend.txt";
     data_t *spend = read_data(data_path);
 
-    char data_path[256] = "/Users/rowanlavelle/Documents/Projects/bayesian-burn-rate/data/funds.txt";
+    char funds_path[256] = "/Users/rowanlavelle/Documents/Projects/bayesian-burn-rate/data/funds.txt";
     data_t *funds = read_data(funds_path);
+
+    change_point_params_t params = {1,0.5,1.5};
     
     for(int i = 2; i<spend->n_data; i++){
         int n_data = i; //spend->n_data;
@@ -24,9 +26,7 @@ int main() {
         int n_iter = 100000;
         
         log_norm_priors_t *priors = &DEFAULT_PRIORS;
-        log_norm_samp_t* samples = gibbs_sampler(
-            priors, data, n_data, n_iter
-        );
+        log_norm_samp_t *samples = gibbs_sampler(priors, data, n_data, n_iter);
 
         char out_path[256];
         char num_str[16]; 
@@ -38,8 +38,11 @@ int main() {
         write_sampler_results(out_path, samples, n_iter);
         
         double sim_iters = 100000;
-        // todo: pass change_point_func params properly, as Q and x0 update with time
-        simulation_t *simulation_results = simulate_spending(funds->data[i],change_point_func,samples,n_iter,sim_iters);
+        double Q = 16.0-i; // 16 months from first run is change point, 15 from 2nd,...
+
+        simulation_t *simulation_results = simulate_spending(
+            funds->data[i],change_point_func,params,Q,samples,n_iter,sim_iters
+        );
         
         char out_path2[256];
         strcpy(out_path2, "/Users/rowanlavelle/Documents/Projects/bayesian-burn-rate/data/sim_results_");
