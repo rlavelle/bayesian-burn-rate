@@ -16,7 +16,7 @@ int main() {
 
     change_point_params_t params = {1,0.5,1.5};
     
-    for(int i = 2; i<spend->n_data; i++){
+    for(int i = 3; i<spend->n_data; i++){
         int n_data = i; //spend->n_data;
 
         double *data = malloc(sizeof(double)*i);
@@ -38,7 +38,7 @@ int main() {
         write_sampler_results(out_path, samples, n_iter);
         
         double sim_iters = 100000;
-        double Q = 16.0-i; // 16 months from first run is change point, 15 from 2nd,...
+        double Q = 17.0-i; // 16 months from first run is change point, 15 from 2nd,...
 
         simulation_t *simulation_results = simulate_spending(
             funds->data[i],change_point_func,params,Q,samples,n_iter,sim_iters
