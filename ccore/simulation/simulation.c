@@ -34,7 +34,7 @@ simulation_t *simulate_spending(double funds,
             }
 
             double sample = gibbs_dist[random_index(gibbs_dist_size)].ypred;
-            if(uniform_sample(0,1) < change_func(j,params.k,params.L,params.L,Q) || flag){
+            if(uniform_sample(0,1) < change_func(j,params.k,params.m,params.L,Q) || flag){
                 sample += 2300;
                 flag = 1;
             }

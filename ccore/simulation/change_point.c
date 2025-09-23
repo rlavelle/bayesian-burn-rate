@@ -14,7 +14,7 @@ double change_point_func(double x, double k, double m, double L, double Q) {
     double result;
     if (x < Q) {
          // same spending if x < Q, small chance of rent
-        result = 0.02;
+        result = 0.00;
     } else {
         // after month Q, sigmoid func to describe chance in rent
         result = sigmoid(x, Q, k, m, L);
